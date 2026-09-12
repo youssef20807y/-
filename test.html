@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Code → Tel Link</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      background: #0f1115;
+      color: #fff;
+      padding: 20px;
+    }
+
+    .box {
+      width: 100%;
+      max-width: 500px;
+      background: #191c23;
+      border: 1px solid #2b303a;
+      border-radius: 18px;
+      padding: 25px;
+      box-shadow: 0 10px 40px rgba(0,0,0,.35);
+    }
+
+    h1 {
+      margin-top: 0;
+      text-align: center;
+      font-size: 26px;
+    }
+
+    p {
+      color: #aeb4c0;
+      text-align: center;
+    }
+
+    input {
+      width: 100%;
+      padding: 15px;
+      border-radius: 10px;
+      border: 1px solid #343a46;
+      background: #101218;
+      color: white;
+      font-size: 18px;
+      direction: ltr;
+      text-align: left;
+      outline: none;
+      margin: 15px 0;
+    }
+
+    input:focus {
+      border-color: #6c8cff;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: 0;
+      border-radius: 10px;
+      background: #526dff;
+      color: white;
+      font-size: 17px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #405be0;
+    }
+
+    .result {
+      display: none;
+      margin-top: 20px;
+    }
+
+    .link {
+      direction: ltr;
+      text-align: left;
+      word-break: break-all;
+      background: #101218;
+      border: 1px solid #343a46;
+      padding: 12px;
+      border-radius: 10px;
+      color: #8ea4ff;
+      margin: 10px 0;
+    }
+
+    .copy {
+      background: #303640;
+      margin-top: 8px;
+    }
+
+    .copy:hover {
+      background: #3b424e;
+    }
+
+    #execute {
+      display: none;
+      margin-top: 20px;
+      background: #21a366;
+    }
+
+    .note {
+      font-size: 13px;
+      margin-top: 15px;
+      line-height: 1.7;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="box" id="generator">
+
+    <h1>تحويل الكود إلى رابط</h1>
+
+    <p>
+      اكتب كود الاتصال وسيتم إنشاء رابط لنفس الصفحة.
+    </p>
+
+    <input
+      id="code"
+      type="text"
+      placeholder="مثال: *#06#"
+      autocomplete="off"
+    >
+
+    <button onclick="generateLink()">
+      إنشاء الرابط
+    </button>
+
+    <div class="result" id="result">
+
+      <p>الرابط الناتج:</p>
+
+      <div class="link" id="generatedLink"></div>
+
+      <button class="copy" onclick="copyLink()">
+        نسخ الرابط
+      </button>
+
+    </div>
+
+    <p class="note">
+      ملاحظة: تشغيل أكواد الاتصال تلقائيًا يعتمد على المتصفح
+      ونظام أندرويد وتطبيق الاتصال.
+    </p>
+
+  </div>
+
+
+  <!-- يظهر فقط عند فتح رابط يحتوي على ?code= -->
+  <div class="box" id="launcher" style="display:none;">
+
+    <h1>جاري فتح الاتصال...</h1>
+
+    <p id="status">
+      محاولة فتح الكود تلقائيًا
+    </p>
+
+    <button id="execute" onclick="executeCode()">
+      فتح الكود
+    </button>
+
+  </div>
+
+
+<script>
+
+  /*
+    تشفير الكود بطريقة مناسبة لرابط URL
+    مثال:
+
+    *#06#
+
+    تصبح:
+
+    *%2306%23
+  */
+
+  function encodeCode(code) {
+    return encodeURIComponent(code);
+  }
+
+
+  /*
+    إنشاء الرابط لنفس الصفحة
+  */
+
+  function generateLink() {
+
+    const code = document.getElementById("code").value.trim();
+
+    if (!code) {
+      alert("اكتب الكود أولاً");
+      return;
+    }
+
+    const encoded = encodeCode(code);
+
+    const url =
+      window.location.origin +
+      window.location.pathname +
+      "?code=" +
+      encoded;
+
+    document.getElementById("generatedLink").textContent = url;
+
+    document.getElementById("result").style.display = "block";
+  }
+
+
+  /*
+    نسخ الرابط
+  */
+
+  function copyLink() {
+
+    const link =
+      document.getElementById("generatedLink").textContent;
+
+    navigator.clipboard.writeText(link)
+      .then(() => {
+        alert("تم نسخ الرابط");
+      })
+      .catch(() => {
+        prompt("انسخ الرابط:", link);
+      });
+  }
+
+
+  /*
+    قراءة الكود من الرابط
+  */
+
+  function getCodeFromURL() {
+
+    const params = new URLSearchParams(window.location.search);
+
+    return params.get("code");
+  }
+
+
+  /*
+    تحويل الكود إلى tel:
+  */
+
+  function makeTelURI(code) {
+
+    return "tel:" + encodeURIComponent(code);
+  }
+
+
+  /*
+    تنفيذ الكود
+  */
+
+  function executeCode() {
+
+    const code = getCodeFromURL();
+
+    if (!code) return;
+
+    const telURI = makeTelURI(code);
+
+    window.location.href = telURI;
+  }
+
+
+  /*
+    عند فتح الصفحة:
+    
+    إذا كان الرابط يحتوي على ?code=
+    نخفي المولد ونحاول فتح الاتصال مباشرة.
+  */
+
+  window.addEventListener("DOMContentLoaded", function() {
+
+    const code = getCodeFromURL();
+
+    if (!code) {
+      return;
+    }
+
+    document.getElementById("generator").style.display = "none";
+    document.getElementById("launcher").style.display = "block";
+
+    /*
+      محاولة التشغيل التلقائي
+    */
+
+    setTimeout(function() {
+
+      const telURI = makeTelURI(code);
+
+      window.location.href = telURI;
+
+      /*
+        إذا منع المتصفح العملية،
+        يظهر زر احتياطي بعد فترة قصيرة.
+      */
+
+      setTimeout(function() {
+
+        document.getElementById("status").textContent =
+          "إذا لم يفتح تطبيق الاتصال تلقائيًا، اضغط الزر بالأسفل.";
+
+        document.getElementById("execute").style.display = "block";
+
+      }, 1500);
+
+    }, 100);
+
+  });
+
+</script>
+
+</body>
+</html>
