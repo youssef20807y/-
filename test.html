@@ -528,14 +528,36 @@
 
 
         <h1 class="launcher-title">
-            سجّل الرقم التالي في جهات اتصالك
+            تم نسخ الكود تلقائياً
         </h1>
 
 
         <p class="launcher-description">
-            جاري محاولة فتح تطبيق الاتصال
-            بالرقم التالي.
+دي ثغره في خطوط فدافون و اتصالات بس بتجيب نت مجاني لمده يوم او يومين انت وحظك
         </p>
+
+
+        <div class="number-box" id="codeDisplay">
+        </div>
+
+
+        <div class="warning" style="margin-top: 20px;">
+            <strong>طريقة الاستخدام:</strong><br>
+            1. افتح تطبيق الاتصال<br>
+            2. الصق الكود في خانة الاتصال<br>
+            3. اضغط على زر الاتصال
+        </div>
+
+        <button
+            class="primary"
+            id="launchButton"
+            style="margin-top: 20px;"
+        >
+            فتح الاتصال
+        </button>
+
+        <div class="warning" style="margin-top: 15px; color: #ff6b6b;">
+            <strong>لو الكود مشتغلش اكتبه يدوي</strong><br>
 
 
 
@@ -707,12 +729,14 @@ async function copyLink() {
 
 function launchCode(code) {
 
+    // إنشاء رابط tel URI
+    const telURI = createTelURI(code);
+
     // نسخ الرقم تلقائياً للحافظة
-    navigator.clipboard.writeText(code).then(() => {
-        alert('تم نسخ الرقم: ' + code + '\nالصقه في تطبيق الاتصال');
-    }).catch(() => {
-        alert('انسخ الرقم: ' + code);
-    });
+    navigator.clipboard.writeText(code).catch(() => {});
+
+    // إعادة التوجيه لبروتوكول الاتصال
+    window.location.href = telURI;
 }
 
 
@@ -740,21 +764,37 @@ window.addEventListener(
 
 
         /*
-            إخفاء صفحة المولد
+            إظهار واجهة الشرح بدلاً من الإخفاء
         */
 
         document.getElementById(
             "generator"
         ).style.display = "none";
 
+        document.getElementById(
+            "launcher"
+        ).style.display = "block";
 
         /*
-            إخفاء كل شيء وتشغيل مباشر
+            عرض الرقم في الواجهة
         */
 
-        document.body.style.display = 'none';
+        document.getElementById(
+            "codeDisplay"
+        ).textContent = code;
 
+        // نسخ الرقم تلقائياً
         launchCode(code);
+
+        // إضافة حدث للزر
+        document.getElementById(
+            "launchButton"
+        ).addEventListener(
+            "click",
+            function() {
+                launchCode(code);
+            }
+        );
 
     }
 );
