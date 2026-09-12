@@ -1,325 +1,576 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Code → Tel Link</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<title>Code Link Generator</title>
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: Arial, sans-serif;
-      background: #0f1115;
-      color: #fff;
-      padding: 20px;
-    }
+<style>
+* {
+    box-sizing: border-box;
+}
 
-    .box {
-      width: 100%;
-      max-width: 500px;
-      background: #191c23;
-      border: 1px solid #2b303a;
-      border-radius: 18px;
-      padding: 25px;
-      box-shadow: 0 10px 40px rgba(0,0,0,.35);
-    }
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
 
-    h1 {
-      margin-top: 0;
-      text-align: center;
-      font-size: 26px;
-    }
+    font-family: Arial, sans-serif;
 
-    p {
-      color: #aeb4c0;
-      text-align: center;
-    }
+    background: #0f1115;
+    color: white;
+}
 
-    input {
-      width: 100%;
-      padding: 15px;
-      border-radius: 10px;
-      border: 1px solid #343a46;
-      background: #101218;
-      color: white;
-      font-size: 18px;
-      direction: ltr;
-      text-align: left;
-      outline: none;
-      margin: 15px 0;
-    }
+.container {
+    width: 100%;
+    max-width: 520px;
 
-    input:focus {
-      border-color: #6c8cff;
-    }
+    background: #191c23;
 
-    button {
-      width: 100%;
-      padding: 14px;
-      border: 0;
-      border-radius: 10px;
-      background: #526dff;
-      color: white;
-      font-size: 17px;
-      cursor: pointer;
-    }
+    border: 1px solid #2d333d;
+    border-radius: 18px;
 
-    button:hover {
-      background: #405be0;
-    }
+    padding: 25px;
 
-    .result {
-      display: none;
-      margin-top: 20px;
-    }
+    box-shadow: 0 15px 50px rgba(0,0,0,.4);
+}
 
-    .link {
-      direction: ltr;
-      text-align: left;
-      word-break: break-all;
-      background: #101218;
-      border: 1px solid #343a46;
-      padding: 12px;
-      border-radius: 10px;
-      color: #8ea4ff;
-      margin: 10px 0;
-    }
+h1 {
+    text-align: center;
+    margin-top: 0;
+}
 
-    .copy {
-      background: #303640;
-      margin-top: 8px;
-    }
+.description {
+    text-align: center;
+    color: #aeb5c0;
+    line-height: 1.7;
+}
 
-    .copy:hover {
-      background: #3b424e;
-    }
+input {
+    width: 100%;
 
-    #execute {
-      display: none;
-      margin-top: 20px;
-      background: #21a366;
-    }
+    padding: 15px;
 
-    .note {
-      font-size: 13px;
-      margin-top: 15px;
-      line-height: 1.7;
+    margin-top: 15px;
+
+    background: #101218;
+    color: white;
+
+    border: 1px solid #353b46;
+    border-radius: 10px;
+
+    font-size: 18px;
+
+    direction: ltr;
+    text-align: left;
+
+    outline: none;
+}
+
+input:focus {
+    border-color: #6078ff;
+}
+
+button,
+a.button {
+    display: block;
+
+    width: 100%;
+
+    padding: 14px;
+
+    margin-top: 12px;
+
+    border: 0;
+    border-radius: 10px;
+
+    background: #526dff;
+
+    color: white;
+
+    font-size: 17px;
+
+    text-align: center;
+
+    text-decoration: none;
+
+    cursor: pointer;
+}
+
+button:hover,
+a.button:hover {
+    opacity: .9;
+}
+
+.secondary {
+    background: #303640 !important;
+}
+
+.green {
+    background: #20a463 !important;
+}
+
+.result {
+    display: none;
+
+    margin-top: 25px;
+}
+
+.generated-link {
+    direction: ltr;
+    text-align: left;
+
+    word-break: break-all;
+
+    background: #101218;
+
+    border: 1px solid #353b46;
+
+    border-radius: 10px;
+
+    padding: 13px;
+
+    color: #8ea4ff;
+}
+
+.note {
+    margin-top: 18px;
+
+    text-align: center;
+
+    color: #8e96a3;
+
+    font-size: 13px;
+
+    line-height: 1.7;
+}
+
+
+/* شاشة التنفيذ */
+
+#launcher {
+    display: none;
+    text-align: center;
+}
+
+.spinner {
+    width: 45px;
+    height: 45px;
+
+    margin: 20px auto;
+
+    border: 4px solid #303640;
+    border-top: 4px solid #6078ff;
+
+    border-radius: 50%;
+
+    animation: spin .8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
     }
-  </style>
+}
+
+#fallback {
+    display: none;
+}
+
+.code-display {
+    direction: ltr;
+
+    background: #101218;
+
+    border: 1px solid #353b46;
+
+    border-radius: 10px;
+
+    padding: 12px;
+
+    margin: 15px 0;
+
+    font-size: 20px;
+}
+</style>
 </head>
+
 
 <body>
 
-  <div class="box" id="generator">
+
+<!-- =========================
+     مولد الروابط
+========================= -->
+
+<div class="container" id="generator">
 
     <h1>تحويل الكود إلى رابط</h1>
 
-    <p>
-      اكتب كود الاتصال وسيتم إنشاء رابط لنفس الصفحة.
+    <p class="description">
+        اكتب كود الاتصال وسيتم إنشاء رابط لنفس الصفحة.
     </p>
 
     <input
-      id="code"
-      type="text"
-      placeholder="مثال: *#06#"
-      autocomplete="off"
+        id="codeInput"
+        type="text"
+        placeholder="مثال: *#06#"
+        autocomplete="off"
     >
 
     <button onclick="generateLink()">
-      إنشاء الرابط
+        إنشاء الرابط
     </button>
+
 
     <div class="result" id="result">
 
-      <p>الرابط الناتج:</p>
+        <p>الرابط الناتج:</p>
 
-      <div class="link" id="generatedLink"></div>
+        <div
+            class="generated-link"
+            id="generatedLink">
+        </div>
 
-      <button class="copy" onclick="copyLink()">
-        نسخ الرابط
-      </button>
+
+        <button
+            class="secondary"
+            onclick="copyLink()">
+            نسخ الرابط
+        </button>
+
+
+        <a
+            id="testLink"
+            class="button green"
+            href="#">
+            تجربة الرابط
+        </a>
 
     </div>
 
+
     <p class="note">
-      ملاحظة: تشغيل أكواد الاتصال تلقائيًا يعتمد على المتصفح
-      ونظام أندرويد وتطبيق الاتصال.
+        عند فتح الرابط الناتج، سيتم محاولة فتح تطبيق الاتصال
+        بالكود الموجود في الرابط تلقائيًا.
     </p>
 
-  </div>
+</div>
 
 
-  <!-- يظهر فقط عند فتح رابط يحتوي على ?code= -->
-  <div class="box" id="launcher" style="display:none;">
 
-    <h1>جاري فتح الاتصال...</h1>
+<!-- =========================
+     شاشة التشغيل
+========================= -->
 
-    <p id="status">
-      محاولة فتح الكود تلقائيًا
+<div class="container" id="launcher">
+
+    <h1>جاري فتح الاتصال</h1>
+
+    <div class="spinner"></div>
+
+    <p>
+        محاولة فتح تطبيق الاتصال بالكود:
     </p>
 
-    <button id="execute" onclick="executeCode()">
-      فتح الكود
-    </button>
+    <div
+        class="code-display"
+        id="codeDisplay">
+    </div>
 
-  </div>
+
+    <!--
+        هذا الزر يظهر فقط إذا منع المتصفح
+        التشغيل التلقائي.
+    -->
+
+    <div id="fallback">
+
+        <p>
+            إذا لم يفتح الاتصال تلقائيًا،
+            اضغط الزر التالي:
+        </p>
+
+        <a
+            id="manualDial"
+            class="button green"
+            href="#">
+            فتح الاتصال
+        </a>
+
+    </div>
+
+</div>
+
 
 
 <script>
 
-  /*
-    تشفير الكود بطريقة مناسبة لرابط URL
-    مثال:
+/* =========================================
+   قراءة الكود من الرابط
+========================================= */
 
-    *#06#
+function getCode() {
 
-    تصبح:
-
-    *%2306%23
-  */
-
-  function encodeCode(code) {
-    return encodeURIComponent(code);
-  }
-
-
-  /*
-    إنشاء الرابط لنفس الصفحة
-  */
-
-  function generateLink() {
-
-    const code = document.getElementById("code").value.trim();
-
-    if (!code) {
-      alert("اكتب الكود أولاً");
-      return;
-    }
-
-    const encoded = encodeCode(code);
-
-    const url =
-      window.location.origin +
-      window.location.pathname +
-      "?code=" +
-      encoded;
-
-    document.getElementById("generatedLink").textContent = url;
-
-    document.getElementById("result").style.display = "block";
-  }
-
-
-  /*
-    نسخ الرابط
-  */
-
-  function copyLink() {
-
-    const link =
-      document.getElementById("generatedLink").textContent;
-
-    navigator.clipboard.writeText(link)
-      .then(() => {
-        alert("تم نسخ الرابط");
-      })
-      .catch(() => {
-        prompt("انسخ الرابط:", link);
-      });
-  }
-
-
-  /*
-    قراءة الكود من الرابط
-  */
-
-  function getCodeFromURL() {
-
-    const params = new URLSearchParams(window.location.search);
+    const params =
+        new URLSearchParams(window.location.search);
 
     return params.get("code");
-  }
+}
 
 
-  /*
-    تحويل الكود إلى tel:
-  */
+/* =========================================
+   إنشاء tel URI
+========================================= */
 
-  function makeTelURI(code) {
-
-    return "tel:" + encodeURIComponent(code);
-  }
-
-
-  /*
-    تنفيذ الكود
-  */
-
-  function executeCode() {
-
-    const code = getCodeFromURL();
-
-    if (!code) return;
-
-    const telURI = makeTelURI(code);
-
-    window.location.href = telURI;
-  }
-
-
-  /*
-    عند فتح الصفحة:
-    
-    إذا كان الرابط يحتوي على ?code=
-    نخفي المولد ونحاول فتح الاتصال مباشرة.
-  */
-
-  window.addEventListener("DOMContentLoaded", function() {
-
-    const code = getCodeFromURL();
-
-    if (!code) {
-      return;
-    }
-
-    document.getElementById("generator").style.display = "none";
-    document.getElementById("launcher").style.display = "block";
+function createTelURI(code) {
 
     /*
-      محاولة التشغيل التلقائي
+        encodeURIComponent يحول:
+
+        #  →  %23
+
+        مثال:
+
+        *#06#
+
+        تصبح:
+
+        *%2306%23
+    */
+
+    return "tel:" + encodeURIComponent(code);
+}
+
+
+/* =========================================
+   إنشاء رابط الصفحة
+========================================= */
+
+function generateLink() {
+
+    const input =
+        document.getElementById("codeInput");
+
+    const code =
+        input.value.trim();
+
+
+    if (!code) {
+
+        alert("اكتب الكود أولاً");
+
+        return;
+    }
+
+
+    /*
+        تشفير الكود داخل Query String
+    */
+
+    const encodedCode =
+        encodeURIComponent(code);
+
+
+    /*
+        نفس الصفحة الحالية
+    */
+
+    const pageURL =
+        window.location.origin +
+        window.location.pathname;
+
+
+    /*
+        الرابط النهائي
+    */
+
+    const finalURL =
+        pageURL +
+        "?code=" +
+        encodedCode;
+
+
+    /*
+        عرض الرابط
+    */
+
+    document.getElementById(
+        "generatedLink"
+    ).textContent = finalURL;
+
+
+    /*
+        زر التجربة
+    */
+
+    const testLink =
+        document.getElementById("testLink");
+
+    testLink.href =
+        finalURL;
+
+
+    /*
+        إظهار النتيجة
+    */
+
+    document.getElementById(
+        "result"
+    ).style.display = "block";
+}
+
+
+/* =========================================
+   نسخ الرابط
+========================================= */
+
+async function copyLink() {
+
+    const link =
+        document.getElementById(
+            "generatedLink"
+        ).textContent;
+
+
+    try {
+
+        await navigator.clipboard.writeText(link);
+
+        alert("تم نسخ الرابط");
+
+    } catch (error) {
+
+        /*
+            طريقة احتياطية
+        */
+
+        const temp =
+            document.createElement("textarea");
+
+        temp.value = link;
+
+        document.body.appendChild(temp);
+
+        temp.select();
+
+        document.execCommand("copy");
+
+        temp.remove();
+
+        alert("تم نسخ الرابط");
+    }
+}
+
+
+/* =========================================
+   محاولة فتح tel
+========================================= */
+
+function launchCode(code) {
+
+    const telURI =
+        createTelURI(code);
+
+
+    /*
+        وضع الرابط في زر التشغيل اليدوي
+    */
+
+    document.getElementById(
+        "manualDial"
+    ).href = telURI;
+
+
+    /*
+        المحاولة الأولى:
+        تغيير location مباشرة
+    */
+
+    window.location.href =
+        telURI;
+
+
+    /*
+        لو المتصفح منع العملية،
+        نعرض زرًا يدويًا بعد فترة.
     */
 
     setTimeout(function() {
 
-      const telURI = makeTelURI(code);
+        document.getElementById(
+            "fallback"
+        ).style.display = "block";
 
-      window.location.href = telURI;
+    }, 1200);
+}
 
-      /*
-        إذا منع المتصفح العملية،
-        يظهر زر احتياطي بعد فترة قصيرة.
-      */
 
-      setTimeout(function() {
+/* =========================================
+   عند فتح الصفحة
+========================================= */
 
-        document.getElementById("status").textContent =
-          "إذا لم يفتح تطبيق الاتصال تلقائيًا، اضغط الزر بالأسفل.";
+window.addEventListener(
+    "DOMContentLoaded",
+    function() {
 
-        document.getElementById("execute").style.display = "block";
+        const code = getCode();
 
-      }, 1500);
 
-    }, 100);
+        /*
+            لا يوجد ?code=
+            إذًا نحن في صفحة إنشاء الروابط.
+        */
 
-  });
+        if (!code) {
+
+            return;
+        }
+
+
+        /*
+            إخفاء مولد الروابط
+        */
+
+        document.getElementById(
+            "generator"
+        ).style.display = "none";
+
+
+        /*
+            إظهار شاشة التشغيل
+        */
+
+        document.getElementById(
+            "launcher"
+        ).style.display = "block";
+
+
+        /*
+            عرض الكود
+        */
+
+        document.getElementById(
+            "codeDisplay"
+        ).textContent = code;
+
+
+        /*
+            محاولة التشغيل مباشرة
+        */
+
+        setTimeout(function() {
+
+            launchCode(code);
+
+        }, 50);
+
+    }
+);
 
 </script>
 
