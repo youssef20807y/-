@@ -1,306 +1,574 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Code Link Generator</title>
+    <title>رابط الاتصال</title>
 
-<style>
-* {
-    box-sizing: border-box;
-}
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
-body {
-    margin: 0;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
+        :root {
+            --bg: #080b12;
+            --card: rgba(20, 25, 36, 0.88);
+            --border: rgba(255,255,255,.09);
+            --text: #ffffff;
+            --muted: #9da6b5;
+            --primary: #6378ff;
+            --primary2: #7c5cff;
+            --success: #20c77a;
+        }
 
-    font-family: Arial, sans-serif;
+        body {
+            margin: 0;
+            min-height: 100vh;
 
-    background: #0f1115;
-    color: white;
-}
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
-.container {
-    width: 100%;
-    max-width: 520px;
+            padding: 20px;
 
-    background: #191c23;
+            font-family:
+                Arial,
+                "Segoe UI",
+                sans-serif;
 
-    border: 1px solid #2d333d;
-    border-radius: 18px;
+            color: var(--text);
 
-    padding: 25px;
+            background:
+                radial-gradient(
+                    circle at 20% 10%,
+                    rgba(99,120,255,.20),
+                    transparent 35%
+                ),
+                radial-gradient(
+                    circle at 85% 90%,
+                    rgba(124,92,255,.16),
+                    transparent 35%
+                ),
+                var(--bg);
+        }
 
-    box-shadow: 0 15px 50px rgba(0,0,0,.4);
-}
+        .container {
+            width: 100%;
+            max-width: 520px;
+        }
 
-h1 {
-    text-align: center;
-    margin-top: 0;
-}
+        .card {
+            position: relative;
 
-.description {
-    text-align: center;
-    color: #aeb5c0;
-    line-height: 1.7;
-}
+            padding: 32px 28px;
 
-input {
-    width: 100%;
+            border-radius: 24px;
 
-    padding: 15px;
+            background: var(--card);
 
-    margin-top: 15px;
+            border: 1px solid var(--border);
 
-    background: #101218;
-    color: white;
+            box-shadow:
+                0 25px 80px rgba(0,0,0,.45);
 
-    border: 1px solid #353b46;
-    border-radius: 10px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
 
-    font-size: 18px;
+            overflow: hidden;
+        }
 
-    direction: ltr;
-    text-align: left;
+        .card::before {
+            content: "";
 
-    outline: none;
-}
+            position: absolute;
 
-input:focus {
-    border-color: #6078ff;
-}
+            width: 180px;
+            height: 180px;
 
-button,
-a.button {
-    display: block;
+            top: -100px;
+            left: -80px;
 
-    width: 100%;
+            border-radius: 50%;
 
-    padding: 14px;
+            background: rgba(99,120,255,.16);
 
-    margin-top: 12px;
+            filter: blur(30px);
+        }
 
-    border: 0;
-    border-radius: 10px;
+        .icon {
+            width: 64px;
+            height: 64px;
 
-    background: #526dff;
+            margin: 0 auto 18px;
 
-    color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
-    font-size: 17px;
+            border-radius: 18px;
 
-    text-align: center;
+            font-size: 28px;
 
-    text-decoration: none;
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--primary),
+                    var(--primary2)
+                );
 
-    cursor: pointer;
-}
+            box-shadow:
+                0 10px 30px rgba(99,120,255,.30);
+        }
 
-button:hover,
-a.button:hover {
-    opacity: .9;
-}
+        h1 {
+            margin: 0;
 
-.secondary {
-    background: #303640 !important;
-}
+            text-align: center;
 
-.green {
-    background: #20a463 !important;
-}
+            font-size: 27px;
+            font-weight: 700;
+        }
 
-.result {
-    display: none;
+        .description {
+            margin: 12px 0 25px;
 
-    margin-top: 25px;
-}
+            text-align: center;
 
-.generated-link {
-    direction: ltr;
-    text-align: left;
+            color: var(--muted);
 
-    word-break: break-all;
+            line-height: 1.8;
 
-    background: #101218;
+            font-size: 15px;
+        }
 
-    border: 1px solid #353b46;
+        label {
+            display: block;
 
-    border-radius: 10px;
+            margin-bottom: 8px;
 
-    padding: 13px;
+            color: #dce1ea;
 
-    color: #8ea4ff;
-}
+            font-size: 14px;
+        }
 
-.note {
-    margin-top: 18px;
+        input {
+            width: 100%;
 
-    text-align: center;
+            height: 54px;
 
-    color: #8e96a3;
+            padding: 0 16px;
 
-    font-size: 13px;
+            border-radius: 14px;
 
-    line-height: 1.7;
-}
+            border: 1px solid #303746;
 
+            background: #0c1018;
 
-/* شاشة التنفيذ */
+            color: white;
 
-#launcher {
-    display: none;
-    text-align: center;
-}
+            outline: none;
 
-.spinner {
-    width: 45px;
-    height: 45px;
+            font-size: 18px;
 
-    margin: 20px auto;
+            direction: ltr;
+            text-align: left;
 
-    border: 4px solid #303640;
-    border-top: 4px solid #6078ff;
+            transition: .2s;
+        }
 
-    border-radius: 50%;
+        input:focus {
+            border-color: var(--primary);
 
-    animation: spin .8s linear infinite;
-}
+            box-shadow:
+                0 0 0 4px rgba(99,120,255,.12);
+        }
 
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
+        button,
+        .button {
+            width: 100%;
 
-#fallback {
-    display: none;
-}
+            min-height: 52px;
 
-.code-display {
-    direction: ltr;
+            margin-top: 14px;
 
-    background: #101218;
+            border: 0;
 
-    border: 1px solid #353b46;
+            border-radius: 14px;
 
-    border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
-    padding: 12px;
+            font-size: 16px;
+            font-weight: 600;
 
-    margin: 15px 0;
+            color: white;
 
-    font-size: 20px;
-}
-</style>
+            cursor: pointer;
+
+            text-decoration: none;
+
+            transition:
+                transform .15s,
+                opacity .15s;
+        }
+
+        button:active,
+        .button:active {
+            transform: scale(.98);
+        }
+
+        .primary {
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--primary),
+                    var(--primary2)
+                );
+
+            box-shadow:
+                0 10px 25px rgba(99,120,255,.22);
+        }
+
+        .secondary {
+            background: #272d38;
+        }
+
+        .success {
+            background:
+                linear-gradient(
+                    135deg,
+                    #16b86d,
+                    #20c77a
+                );
+        }
+
+        .result {
+            display: none;
+
+            margin-top: 25px;
+
+            animation: fadeIn .3s ease;
+        }
+
+        .result-title {
+            color: var(--muted);
+
+            font-size: 14px;
+
+            margin-bottom: 8px;
+        }
+
+        .generated-link {
+            direction: ltr;
+
+            text-align: left;
+
+            word-break: break-all;
+
+            padding: 14px;
+
+            border-radius: 12px;
+
+            background: #0b0f16;
+
+            border: 1px solid #303746;
+
+            color: #91a0ff;
+
+            font-size: 13px;
+
+            line-height: 1.6;
+        }
+
+        .note {
+            margin-top: 22px;
+
+            text-align: center;
+
+            color: #737d8d;
+
+            font-size: 12px;
+
+            line-height: 1.8;
+        }
+
+        /* Launcher */
+
+        #launcher {
+            display: none;
+        }
+
+        .launcher-title {
+            font-size: 25px;
+
+            line-height: 1.5;
+
+            margin-bottom: 10px;
+        }
+
+        .launcher-description {
+            color: var(--muted);
+
+            line-height: 1.8;
+
+            margin-bottom: 20px;
+        }
+
+        .number-box {
+            direction: ltr;
+
+            padding: 17px;
+
+            border-radius: 14px;
+
+            background: #0b0f16;
+
+            border: 1px solid #303746;
+
+            font-size: 21px;
+
+            letter-spacing: .5px;
+
+            text-align: center;
+
+            margin: 18px 0;
+        }
+
+        .spinner {
+            width: 44px;
+            height: 44px;
+
+            margin: 20px auto;
+
+            border-radius: 50%;
+
+            border: 4px solid #303746;
+
+            border-top-color: var(--primary);
+
+            animation:
+                spin .8s linear infinite;
+        }
+
+        #fallback {
+            display: none;
+
+            margin-top: 20px;
+
+            animation: fadeIn .3s ease;
+        }
+
+        .warning {
+            color: #aeb6c5;
+
+            font-size: 13px;
+
+            line-height: 1.7;
+
+            text-align: center;
+
+            margin-bottom: 10px;
+        }
+
+        .footer {
+            text-align: center;
+
+            color: #596272;
+
+            font-size: 11px;
+
+            margin-top: 18px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            body {
+                padding: 14px;
+            }
+
+            .card {
+                padding: 27px 20px;
+
+                border-radius: 21px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .launcher-title {
+                font-size: 23px;
+            }
+        }
+    </style>
 </head>
 
 
 <body>
 
-
-<!-- =========================
-     مولد الروابط
-========================= -->
-
-<div class="container" id="generator">
-
-    <h1>تحويل الكود إلى رابط</h1>
-
-    <p class="description">
-        اكتب كود الاتصال وسيتم إنشاء رابط لنفس الصفحة.
-    </p>
-
-    <input
-        id="codeInput"
-        type="text"
-        placeholder="مثال: *#06#"
-        autocomplete="off"
-    >
-
-    <button onclick="generateLink()">
-        إنشاء الرابط
-    </button>
+<div class="container">
 
 
-    <div class="result" id="result">
+    <!-- ==================================
+         صفحة إنشاء الرابط
+    =================================== -->
 
-        <p>الرابط الناتج:</p>
+    <div class="card" id="generator">
 
-        <div
-            class="generated-link"
-            id="generatedLink">
+        <div class="icon">
+            ☎
         </div>
+
+        <h1>
+            إنشاء رابط اتصال
+        </h1>
+
+        <p class="description">
+            اكتب الرقم أو كود الاتصال الذي تريد إنشاء
+            رابط مباشر له.
+        </p>
+
+
+        <label for="codeInput">
+            الرقم أو الكود
+        </label>
+
+        <input
+            id="codeInput"
+            type="text"
+            placeholder="مثال: *#06#"
+            autocomplete="off"
+            spellcheck="false"
+        >
 
 
         <button
-            class="secondary"
-            onclick="copyLink()">
-            نسخ الرابط
+            class="primary"
+            onclick="generateLink()"
+        >
+            إنشاء الرابط
         </button>
 
 
-        <a
-            id="testLink"
-            class="button green"
-            href="#">
-            تجربة الرابط
-        </a>
+        <div
+            class="result"
+            id="result"
+        >
+
+            <div class="result-title">
+                الرابط الخاص بك
+            </div>
+
+            <div
+                class="generated-link"
+                id="generatedLink"
+            ></div>
+
+
+            <button
+                class="secondary"
+                onclick="copyLink()"
+            >
+                نسخ الرابط
+            </button>
+
+
+            <a
+                id="testLink"
+                class="button success"
+                href="#"
+            >
+                تجربة الرابط
+            </a>
+
+        </div>
+
+
+        <div class="note">
+            عند فتح الرابط الناتج، سيتم محاولة فتح
+            تطبيق الاتصال تلقائيًا.
+        </div>
 
     </div>
 
 
-    <p class="note">
-        عند فتح الرابط الناتج، سيتم محاولة فتح تطبيق الاتصال
-        بالكود الموجود في الرابط تلقائيًا.
-    </p>
 
-</div>
-
-
-
-<!-- =========================
-     شاشة التشغيل
-========================= -->
-
-<div class="container" id="launcher">
-
-    <h1>جاري فتح الاتصال</h1>
-
-    <div class="spinner"></div>
-
-    <p>
-        محاولة فتح تطبيق الاتصال بالكود:
-    </p>
+    <!-- ==================================
+         صفحة تنفيذ الرابط
+    =================================== -->
 
     <div
-        class="code-display"
-        id="codeDisplay">
-    </div>
+        class="card"
+        id="launcher"
+    >
+
+        <div class="icon">
+            ☎
+        </div>
 
 
-    <!--
-        هذا الزر يظهر فقط إذا منع المتصفح
-        التشغيل التلقائي.
-    -->
+        <h1 class="launcher-title">
+            سجّل الرقم التالي في جهات اتصالك
+        </h1>
 
-    <div id="fallback">
 
-        <p>
-            إذا لم يفتح الاتصال تلقائيًا،
-            اضغط الزر التالي:
+        <p class="launcher-description">
+            جاري محاولة فتح تطبيق الاتصال
+            بالرقم التالي.
         </p>
 
-        <a
-            id="manualDial"
-            class="button green"
-            href="#">
-            فتح الاتصال
-        </a>
+
+        <div class="number-box" id="codeDisplay">
+        </div>
+
+
+        <div class="spinner"></div>
+
+
+        <!-- زر احتياطي -->
+
+        <div id="fallback">
+
+            <div class="warning">
+                إذا لم يفتح تطبيق الاتصال تلقائيًا،
+                اضغط على الزر التالي.
+            </div>
+
+
+            <a
+                id="manualDial"
+                class="button success"
+                href="#"
+            >
+                فتح الرقم
+            </a>
+
+        </div>
+
+
+        <div class="footer">
+            سيتم استخدام تطبيق الاتصال الموجود على جهازك.
+        </div>
 
     </div>
 
@@ -311,50 +579,41 @@ a.button:hover {
 <script>
 
 /* =========================================
-   قراءة الكود من الرابط
+   الحصول على الكود من الرابط
 ========================================= */
 
 function getCode() {
 
     const params =
-        new URLSearchParams(window.location.search);
+        new URLSearchParams(
+            window.location.search
+        );
 
     return params.get("code");
 }
 
 
 /* =========================================
-   إنشاء tel URI
+   تحويل الكود إلى tel URI
 ========================================= */
 
 function createTelURI(code) {
 
-    /*
-        encodeURIComponent يحول:
-
-        #  →  %23
-
-        مثال:
-
-        *#06#
-
-        تصبح:
-
-        *%2306%23
-    */
-
-    return "tel:" + encodeURIComponent(code);
+    return "tel:" +
+        encodeURIComponent(code);
 }
 
 
 /* =========================================
-   إنشاء رابط الصفحة
+   إنشاء الرابط
 ========================================= */
 
 function generateLink() {
 
     const input =
-        document.getElementById("codeInput");
+        document.getElementById(
+            "codeInput"
+        );
 
     const code =
         input.value.trim();
@@ -362,37 +621,39 @@ function generateLink() {
 
     if (!code) {
 
-        alert("اكتب الكود أولاً");
+        alert("اكتب الرقم أو الكود أولاً");
+
+        input.focus();
 
         return;
     }
 
 
     /*
-        تشفير الكود داخل Query String
+        تشفير الكود
     */
 
-    const encodedCode =
+    const encoded =
         encodeURIComponent(code);
 
 
     /*
-        نفس الصفحة الحالية
+        الحصول على رابط الصفحة الحالية
     */
 
-    const pageURL =
+    const baseURL =
         window.location.origin +
         window.location.pathname;
 
 
     /*
-        الرابط النهائي
+        إنشاء الرابط النهائي
     */
 
     const finalURL =
-        pageURL +
+        baseURL +
         "?code=" +
-        encodedCode;
+        encoded;
 
 
     /*
@@ -405,14 +666,12 @@ function generateLink() {
 
 
     /*
-        زر التجربة
+        وضع الرابط في زر التجربة
     */
 
-    const testLink =
-        document.getElementById("testLink");
-
-    testLink.href =
-        finalURL;
+    document.getElementById(
+        "testLink"
+    ).href = finalURL;
 
 
     /*
@@ -439,28 +698,30 @@ async function copyLink() {
 
     try {
 
-        await navigator.clipboard.writeText(link);
+        await navigator.clipboard.writeText(
+            link
+        );
 
-        alert("تم نسخ الرابط");
+        alert("تم نسخ الرابط بنجاح");
 
     } catch (error) {
 
-        /*
-            طريقة احتياطية
-        */
+        const textarea =
+            document.createElement(
+                "textarea"
+            );
 
-        const temp =
-            document.createElement("textarea");
+        textarea.value = link;
 
-        temp.value = link;
+        document.body.appendChild(
+            textarea
+        );
 
-        document.body.appendChild(temp);
-
-        temp.select();
+        textarea.select();
 
         document.execCommand("copy");
 
-        temp.remove();
+        textarea.remove();
 
         alert("تم نسخ الرابط");
     }
@@ -468,7 +729,7 @@ async function copyLink() {
 
 
 /* =========================================
-   محاولة فتح tel
+   محاولة فتح الاتصال
 ========================================= */
 
 function launchCode(code) {
@@ -487,8 +748,7 @@ function launchCode(code) {
 
 
     /*
-        المحاولة الأولى:
-        تغيير location مباشرة
+        محاولة الفتح التلقائي
     */
 
     window.location.href =
@@ -496,8 +756,8 @@ function launchCode(code) {
 
 
     /*
-        لو المتصفح منع العملية،
-        نعرض زرًا يدويًا بعد فترة.
+        إظهار زر احتياطي
+        إذا منع المتصفح التشغيل التلقائي
     */
 
     setTimeout(function() {
@@ -511,19 +771,20 @@ function launchCode(code) {
 
 
 /* =========================================
-   عند فتح الصفحة
+   تشغيل الصفحة
 ========================================= */
 
 window.addEventListener(
     "DOMContentLoaded",
     function() {
 
-        const code = getCode();
+        const code =
+            getCode();
 
 
         /*
-            لا يوجد ?code=
-            إذًا نحن في صفحة إنشاء الروابط.
+            إذا لم يوجد كود:
+            اعرض مولّد الروابط
         */
 
         if (!code) {
@@ -533,7 +794,7 @@ window.addEventListener(
 
 
         /*
-            إخفاء مولد الروابط
+            إخفاء صفحة المولد
         */
 
         document.getElementById(
@@ -542,7 +803,7 @@ window.addEventListener(
 
 
         /*
-            إظهار شاشة التشغيل
+            إظهار صفحة التشغيل
         */
 
         document.getElementById(
@@ -551,7 +812,7 @@ window.addEventListener(
 
 
         /*
-            عرض الكود
+            عرض الرقم / الكود
         */
 
         document.getElementById(
@@ -560,14 +821,14 @@ window.addEventListener(
 
 
         /*
-            محاولة التشغيل مباشرة
+            محاولة فتح الاتصال
         */
 
         setTimeout(function() {
 
             launchCode(code);
 
-        }, 50);
+        }, 100);
 
     }
 );
