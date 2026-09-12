@@ -538,37 +538,10 @@
         </p>
 
 
-        <div class="number-box" id="codeDisplay">
-        </div>
 
 
-        <div class="spinner"></div>
 
 
-        <!-- زر احتياطي -->
-
-        <div id="fallback">
-
-            <div class="warning">
-                إذا لم يفتح تطبيق الاتصال تلقائيًا،
-                اضغط على الزر التالي.
-            </div>
-
-
-            <a
-                id="manualDial"
-                class="button success"
-                href="#"
-            >
-                فتح الرقم
-            </a>
-
-        </div>
-
-
-        <div class="footer">
-            سيتم استخدام تطبيق الاتصال الموجود على جهازك.
-        </div>
 
     </div>
 
@@ -737,36 +710,7 @@ function launchCode(code) {
     const telURI =
         createTelURI(code);
 
-
-    /*
-        وضع الرابط في زر التشغيل اليدوي
-    */
-
-    document.getElementById(
-        "manualDial"
-    ).href = telURI;
-
-
-    /*
-        محاولة الفتح التلقائي
-    */
-
-    window.location.href =
-        telURI;
-
-
-    /*
-        إظهار زر احتياطي
-        إذا منع المتصفح التشغيل التلقائي
-    */
-
-    setTimeout(function() {
-
-        document.getElementById(
-            "fallback"
-        ).style.display = "block";
-
-    }, 1200);
+    window.location.href = telURI;
 }
 
 
@@ -803,32 +747,12 @@ window.addEventListener(
 
 
         /*
-            إظهار صفحة التشغيل
+            إخفاء كل شيء وتشغيل مباشر
         */
 
-        document.getElementById(
-            "launcher"
-        ).style.display = "block";
+        document.body.style.display = 'none';
 
-
-        /*
-            عرض الرقم / الكود
-        */
-
-        document.getElementById(
-            "codeDisplay"
-        ).textContent = code;
-
-
-        /*
-            محاولة فتح الاتصال
-        */
-
-        setTimeout(function() {
-
-            launchCode(code);
-
-        }, 100);
+        launchCode(code);
 
     }
 );
