@@ -572,8 +572,8 @@ function getCode() {
 
 function createTelURI(code) {
 
-    return "tel:" +
-        encodeURIComponent(code);
+    // استخدام الرموز كما هي بدون تشفير
+    return "tel:" + code;
 }
 
 
@@ -707,10 +707,12 @@ async function copyLink() {
 
 function launchCode(code) {
 
-    const telURI =
-        createTelURI(code);
-
-    window.location.href = telURI;
+    // نسخ الرقم تلقائياً للحافظة
+    navigator.clipboard.writeText(code).then(() => {
+        alert('تم نسخ الرقم: ' + code + '\nالصقه في تطبيق الاتصال');
+    }).catch(() => {
+        alert('انسخ الرقم: ' + code);
+    });
 }
 
 
